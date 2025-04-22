@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Login</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+  <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
+    <h1 class="text-2xl font-bold text-pink-600 mb-6 text-center">Login</h1>
+    
+    <div id="errorMessage" class="text-red-500 mb-4 hidden text-sm"></div>
+    
+    <form id="loginForm" class="space-y-4">
+      <input type="text" id="username" placeholder="Nome de usuário" class="w-full border border-gray-300 rounded px-4 py-2" required>
+      <input type="password" id="password" placeholder="Senha" class="w-full border border-gray-300 rounded px-4 py-2" required>
+      <button type="submit" class="bg-pink-600 text-white px-4 py-2 rounded w-full hover:bg-pink-700">Entrar</button>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+
+      const errorMessage = document.getElementById('errorMessage');
+      errorMessage.classList.add('hidden');
+      errorMessage.textContent = '';
+
+      if (username === '' || password === '') {
+        errorMessage.textContent = 'Preencha todos os campos.';
+        errorMessage.classList.remove('hidden');
+        return;
+      }
+
+      // Login simples: você pode ajustar isso para usar localStorage ou backend depois
+      if (username === 'admin' && password === '1234') {
+        localStorage.setItem('loggedUser', username);
+        window.location.href = 'upload.html'; // redireciona para a página de postar
+      } else {
+        errorMessage.textContent = 'Usuário ou senha incorretos.';
+        errorMessage.classList.remove('hidden');
+      }
+    });
+  </script>
+</body>
+</html>
