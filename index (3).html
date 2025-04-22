@@ -1,0 +1,118 @@
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Galeria de Fotos</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+  />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    body {
+      font-family: 'Montserrat', sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+  <header class="bg-white shadow-md">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+      <h1 class="text-3xl font-bold text-pink-600">Galeria de Fotos</h1>
+      <a href="index.html" class="text-pink-600 hover:text-pink-800 font-semibold flex items-center">
+        <i class="fas fa-arrow-left mr-2"></i> Voltar
+      </a>
+    </div>
+  </header>
+
+  <main class="flex-grow max-w-6xl mx-auto px-4 py-8 w-full">
+    <h2 class="text-3xl font-bold mb-8 text-pink-600 text-center">Galeria de Fotos Postadas</h2>
+    <div id="galleryGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <!-- Fotos aparecerão aqui -->
+    </div>
+  </main>
+
+  <footer class="bg-white border-t mt-12 py-4">
+    <div class="max-w-6xl mx-auto px-4 text-center text-gray-500 text-sm">
+      &copy; 2024 Galeria de Fotos. Todos os direitos reservados.
+    </div>
+  </footer>
+
+  <script>
+    const galleryGrid = document.getElementById('galleryGrid');
+
+    function loadGallery() {
+      galleryGrid.innerHTML = '';
+      const photos = JSON.parse(localStorage.getItem('photos')) || [];
+
+      if (photos.length === 0) {
+        galleryGrid.innerHTML =
+          '<p class="col-span-full text-center text-gray-500">Nenhuma foto postada ainda.</p>';
+        return;
+      }
+
+      photos.forEach((photo) => {
+        const photoCard = document.createElement('article');
+        photoCard.className =
+          'bg-white rounded-lg shadow-md overflow-hidden flex flex-col cursor-pointer hover:shadow-lg transition';
+
+        photoCard.innerHTML = `
+          <img
+            src="${photo.imageUrl}"
+            alt="Foto intitulada '${photo.title}', postada por ${photo.postedBy || 'anônimo'}, mostrando uma modelo em pose elegante com fundo neutro"
+            class="w-full h-48 object-cover"
+          />
+          <div class="p-4 flex flex-col flex-grow">
+            <h3 class="text-lg font-semibold text-pink-600 mb-1 truncate">${photo.title}</h3>
+            <p class="text-gray-700 flex-grow">${photo.description || ''}</p>
+            <p class="mt-3 text-xs text-gray-400 italic">Postado por <span class="font-medium">${photo.postedBy || 'anônimo'}</span></p>
+            <p class="text-xs text-gray-400">${new Date(photo.postedAt).toLocaleString('pt-BR')}</p>
+          </div>
+        `;
+
+        photoCard.addEventListener('click', () => {
+          openModal(photo);
+        });
+
+        galleryGrid.appendChild(photoCard);
+      });
+    }
+
+    // Modal para visualizar foto ampliada
+    function openModal(photo) {
+      const modal = document.createElement('div');
+      modal.className =
+        'fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4';
+
+      modal.innerHTML = `
+        <div class="bg-white rounded-lg max-w-3xl w-full max-h-full overflow-auto relative">
+          <button aria-label="Fechar" class="absolute top-3 right-3 text-gray-600 hover:text-pink-600 text-2xl font-bold">&times;</button>
+          <img src="${photo.imageUrl}" alt="Foto ampliada intitulada '${photo.title}', postada por ${photo.postedBy || 'anônimo'}, mostrando uma modelo em pose elegante com fundo neutro" class="w-full object-contain rounded-t-lg" />
+          <div class="p-6">
+            <h3 class="text-2xl font-bold text-pink-600 mb-2">${photo.title}</h3>
+            <p class="text-gray-700 mb-4">${photo.description || ''}</p>
+            <p class="text-sm text-gray-500 italic">Postado por <span class="font-semibold">${photo.postedBy || 'anônimo'}</span> em ${new Date(photo.postedAt).toLocaleString('pt-BR')}</p>
+          </div>
+        </div>
+      `;
+
+      modal.querySelector('button').addEventListener('click', () => {
+        document.body.removeChild(modal);
+      });
+
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          document.body.removeChild(modal);
+        }
+      });
+
+      document.body.appendChild(modal);
+    }
+
+    loadGallery();
+  </script>
+</body>
+</html>
